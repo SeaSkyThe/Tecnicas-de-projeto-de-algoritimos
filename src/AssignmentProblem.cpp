@@ -30,6 +30,7 @@ struct node* new_node(int pessoa, int trabalho, bool atribuidos[], struct node* 
     return node;
 }
 
+//funcao que calcula o provavel menor custo depois que uma pessoa foi atribuida a um trabalho, ou seja, calcula todos depois dessa atribuição
 int calcular_custo(int matrizCusto[DIM][DIM], int pessoa, int trabalho, bool atribuidos[]){
     int custo = 0;
 
@@ -56,6 +57,7 @@ int calcular_custo(int matrizCusto[DIM][DIM], int pessoa, int trabalho, bool atr
     return custo;
 }
 
+
 struct comp{
     bool operator()(const struct node* left, const struct node* right)const{
         return left -> custo > right -> custo;
@@ -70,9 +72,10 @@ void print_atribuicoes(struct node* minimo){
 }
 
 int encontrar_menor_custo(int matrizCusto[DIM][DIM]){
-    //criando fila de prioridade
+    //criando fila de prioridade para armazenar os nós ativos da arvore de busca
     priority_queue<struct node*, std::vector<struct node*>, comp>fila_prioridade;
-
+    
+    //inicializando heap com raiz de custo 0
     bool atribuidos[DIM] = {false};
     struct node* raiz = new_node(-1, -1, atribuidos, NULL);
     raiz -> custo_caminho = raiz -> custo = 0;
@@ -81,9 +84,12 @@ int encontrar_menor_custo(int matrizCusto[DIM][DIM]){
     fila_prioridade.push(raiz);
 
     while(!fila_prioridade.empty()){
+        //Pega o nó ativo com menor custo estimado
         struct node* min = fila_prioridade.top();
+        //O nó que foi pego é removido da lista de nós ativos
         fila_prioridade.pop();
-
+        
+        // i guarda a proxima pessoa
         int i = min -> num_pessoa + 1;
         //se todos as pessoas ja receberam trabalho
         if(i == DIM){
@@ -94,10 +100,12 @@ int encontrar_menor_custo(int matrizCusto[DIM][DIM]){
         for(int j = 0; j < DIM; j++){
             //se nao foi atribuido
             if(!min->atribuidos[j]){
+                //cria um nó novo
                 struct node* filho = new_node(i, j, min -> atribuidos, min);
+                //custo dos anteriores + o novo nó
                 filho -> custo_caminho = min -> custo_caminho + matrizCusto[i][j];
                 filho -> custo = filho -> custo_caminho + calcular_custo(matrizCusto, i, j, filho -> atribuidos);
-
+                //insere esse novo nó (filho) na lista de nós ativos
                 fila_prioridade.push(filho);
             }
         }
