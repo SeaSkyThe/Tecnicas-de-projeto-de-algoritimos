@@ -52,6 +52,7 @@ int calcular_custo(int matrizCusto[DIM][DIM], int pessoa, int trabalho, bool atr
         }
         //incrementa o custo
         custo += min;
+        //torna o trabalho utilizado indisponivel
         disponiveis[min_indice] = false;
     }
     return custo;
