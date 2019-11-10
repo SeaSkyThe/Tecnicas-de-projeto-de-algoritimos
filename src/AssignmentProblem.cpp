@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <queue>
+#include<bits/stdc++.h>  //Essa linha pode não ser necessaria
 using namespace std;
 #define DIM 4
 
