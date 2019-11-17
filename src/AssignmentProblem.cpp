@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <queue>
-#include<bits/stdc++.h>  //Essa linha pode não ser necessaria
+#include "stdc++.h"  //Essa linha pode não ser necessaria
 using namespace std;
 #define DIM 4
 
@@ -76,7 +76,7 @@ void print_atribuicoes(struct node* minimo){
 int encontrar_menor_custo(int matrizCusto[DIM][DIM]){
     //criando fila de prioridade para armazenar os nós ativos da arvore de busca
     priority_queue<struct node*, std::vector<struct node*>, comp>fila_prioridade;
-    
+
     //inicializando heap com raiz de custo 0
     bool atribuidos[DIM] = {false};
     struct node* raiz = new_node(-1, -1, atribuidos, NULL);
@@ -90,7 +90,7 @@ int encontrar_menor_custo(int matrizCusto[DIM][DIM]){
         struct node* min = fila_prioridade.top();
         //O nó que foi pego é removido da lista de nós ativos
         fila_prioridade.pop();
-        
+
         // i guarda a proxima pessoa
         int i = min -> num_pessoa + 1;
         //se todos as pessoas ja receberam trabalho
