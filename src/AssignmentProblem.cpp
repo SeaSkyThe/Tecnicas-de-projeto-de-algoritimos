@@ -1,12 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <unistd.h>
 #include <queue>
-#include<bits/stdc++.h>  //Essa linha pode não ser necessaria
+#include "stdc++.h"  //Essa linha pode não ser necessaria
 using namespace std;
-#define DIM 4
+#define DIM 100
 
+void clearScreen(char* mensagem){
+    const char *CLEAR_SCREEN_ANSI = "\e[1;1H\e[2J";
 
+    char ch;
+    printf("%s", mensagem);
+    scanf("%c",&ch);
+    getchar();
+
+    write(STDOUT_FILENO, CLEAR_SCREEN_ANSI, 12);
+}
 
 struct node{
     int num_trabalho;
@@ -32,18 +42,18 @@ struct node* new_node(int pessoa, int trabalho, bool atribuidos[], struct node* 
 }
 
 //funcao que calcula o provavel menor custo depois que uma pessoa foi atribuida a um trabalho, ou seja, calcula todos depois dessa atribuição
-int calcular_custo(int matrizCusto[DIM][DIM], int pessoa, int trabalho, bool atribuidos[]){
+int calcular_custo(int matrizCusto[DIM][DIM], int pessoa, int trabalho, bool atribuidos[], int tamanho){
     int custo = 0;
 
     //armazenar trabalhos indisponiveis e disponiveis
     bool disponiveis[DIM] = {true};
 
     //para cada pessoa
-    for(int i = pessoa + 1; i < DIM; i++){
+    for(int i = pessoa + 1; i < tamanho; i++){
         int min = INT_MAX; //custo minimo
         int min_indice = -1;
         //para cada trabalho
-        for(int j = 0; j < DIM; j++){
+        for(int j = 0; j < tamanho; j++){
             //se o trabalho nao foi atribuidos ainda
             if(!atribuidos[j] && disponiveis[j] && matrizCusto[i][j] < min){
                 //guarda o numero do trabalho
@@ -70,13 +80,13 @@ void print_atribuicoes(struct node* minimo){
     if(minimo -> pai == NULL)
         return;
     print_atribuicoes(minimo -> pai);
-    printf("Trabalhador:  %d | Tarefa:  %d\n", minimo -> num_trabalho, minimo -> num_pessoa);
+    printf(" Trabalhador:  %d | Tarefa:  %d\n", minimo -> num_trabalho, minimo -> num_pessoa);
 }
 
-int encontrar_menor_custo(int matrizCusto[DIM][DIM]){
+int encontrar_menor_custo(int matrizCusto[DIM][DIM], int tamanho){
     //criando fila de prioridade para armazenar os nós ativos da arvore de busca
     priority_queue<struct node*, std::vector<struct node*>, comp>fila_prioridade;
-    
+
     //inicializando heap com raiz de custo 0
     bool atribuidos[DIM] = {false};
     struct node* raiz = new_node(-1, -1, atribuidos, NULL);
@@ -90,23 +100,23 @@ int encontrar_menor_custo(int matrizCusto[DIM][DIM]){
         struct node* min = fila_prioridade.top();
         //O nó que foi pego é removido da lista de nós ativos
         fila_prioridade.pop();
-        
+
         // i guarda a proxima pessoa
         int i = min -> num_pessoa + 1;
         //se todos as pessoas ja receberam trabalho
-        if(i == DIM){
+        if(i == tamanho){
             print_atribuicoes(min);
             return min -> custo;
         }
         //para cada trabalho
-        for(int j = 0; j < DIM; j++){
+        for(int j = 0; j < tamanho; j++){
             //se nao foi atribuido
             if(!min->atribuidos[j]){
                 //cria um nó novo
                 struct node* filho = new_node(i, j, min -> atribuidos, min);
                 //custo dos anteriores + o novo nó
                 filho -> custo_caminho = min -> custo_caminho + matrizCusto[i][j];
-                filho -> custo = filho -> custo_caminho + calcular_custo(matrizCusto, i, j, filho -> atribuidos);
+                filho -> custo = filho -> custo_caminho + calcular_custo(matrizCusto, i, j, filho -> atribuidos, tamanho);
                 //insere esse novo nó (filho) na lista de nós ativos
                 fila_prioridade.push(filho);
             }
@@ -117,7 +127,8 @@ int encontrar_menor_custo(int matrizCusto[DIM][DIM]){
 }
 int main() {
 
-    int matriz_custo[DIM][DIM] =
+
+    int matriz_custo[4][4] =
     {
         {82, 83, 69, 92},
         {77, 37, 49, 92},
@@ -125,7 +136,64 @@ int main() {
         { 8,  9, 98, 23}
     };
 
-    printf("O MELHOR CUSTO E: %d\n",encontrar_menor_custo(matriz_custo));
+    printf("\n\nEXEMPLO DE MATRIZ DE TAREFAS: \n\n");
+    printf("             ");
+    for(int k = 0; k < 4; k++){
+        printf("Job %d   ", k);
+    }
+    printf("\n\n");
+    for(int i = 0; i < 4; i++){
+        printf("Pessoa %d ", i);
+        for(int j = 0; j < 4; j++){
+            printf("%8d", matriz_custo[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n\n\n\n");
+    int tamanho;
+    printf("\n\n");
+
+    printf("Qual sera a dimensao da sua matriz de custos? ");
+    scanf("%d", &tamanho);
+    printf("\n\n");
+    int matriz_usuario[DIM][DIM];
+    //inicializa matriz
+    for(int l = 0; l < tamanho; l++){
+        for(int m = 0; m < tamanho; m++){
+            matriz_usuario[l][m] = 0;
+        }
+    }
+    int temp;
+    for(int i = 0; i < tamanho; i++){
+        for(int j = 0; j < tamanho; j++){
+            //printa matriz atual
+            printf("            ");
+            for(int k = 0; k < tamanho; k++)
+                printf("Job %d   ", k);
+            printf("\n\n");
+            for(int l = 0; l < tamanho; l++){
+                printf("Pessoa %d ", l);
+                for(int m = 0; m < tamanho; m++){
+                    if(matriz_usuario[l][m] == 0){
+                        printf("        ");
+                    }
+                    else
+                        printf("%8d", matriz_usuario[l][m]);
+                }
+                printf("\n");
+            }
+            printf("\nSeguindo o exemplo, por favor insira um numero na matriz Pessoa X Trabalho\n");
+            printf("Lembrando: os numeros serao inseridos na matriz sempre a direita, ate o fim da linha: ");
+            scanf("%d", &temp);
+            matriz_usuario[i][j] = temp;
+            printf("\n\n%d %d \n\n", i, j);
+            clearScreen("Aperte enter para ir para a inserção do prox numero...");
+        }
+    }
+
+
+
+    printf("\n\nMELHOR CUSTO: %d\n", encontrar_menor_custo(matriz_usuario, tamanho));
     return 1;
 
 
