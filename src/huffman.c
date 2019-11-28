@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define LIMIT 26
+#define LIMIT 126
 
 int DEBUG = 0;
 
@@ -19,7 +19,7 @@ struct tree_node {
     //  Frequência acumulada do nó
     int f;
     //  Caractere ou conjunto de caracteres assomados
-    char c[26];
+    char c[500];
 };
 
 struct tree_node* make_node() {
@@ -40,9 +40,10 @@ short count_chars(char *source, int *count) {
     int total = 0;
     while (*(source + i) != '\0') {
         //  Variável auxiliar mais legível do que "*(source + i)" no intervalo [0-LIMIT]
-        char current_char = toupper(*(source + i)) - 'A';
-        //  aborta caso haja um caractere fora da range [A-Z]
-        if (current_char < 0 || current_char >= LIMIT) return 0;
+        // char current_char = toupper(*(source + i));
+        char current_char = *(source + i);
+        //  aborta caso haja um caractere fora da range [A-Z] + ' '
+        // if (current_char < 0 || current_char >= LIMIT) return 0;
 
         //  Incremeneta o contador do caractere atual
         if (*(count + (current_char)) == 0) total++;
@@ -54,7 +55,8 @@ short count_chars(char *source, int *count) {
 
 void print_count(int* count) {
     for (int i = 0; i < LIMIT; i++) {
-        if (*(count + i) > 0) printf("%c - %d\n", i + 'A', *(count + i));
+        // printf("Teste - %d\n", i);
+        // if (*(count + i) > 0 && i >= 32) printf("%c - %d\n", i, *(count + i));
     }
 }
 
@@ -109,7 +111,7 @@ struct tree_node* chars_to_nodes(int *count) {
             struct tree_node* n = make_node();
             n->f = *(count + i);
             //  HACK THE PLANET
-            n->c[0] = i + 'A';
+            n->c[0] = i;
             n->c[1] = '\0';
             lst_push(&root, n);
         }
@@ -171,7 +173,7 @@ void invert(char* word, int size) {
 }
 
 char* bin_from_tree(struct tree_node* root, char c) {
-    char* bin = (char*)malloc(sizeof(char) * 5);
+    char* bin = (char*)malloc(sizeof(char) * 7);
     int size = 0;
     struct tree_node* leaf = tree_search(root, c);
     while (leaf->parent != NULL) {
@@ -197,7 +199,16 @@ void explain(struct tree_node* root) {
 int main() {
     //  Texto a ser comprimido
     // char source_text[100] = "MEUNOMEERAFAELARAUJOCHINAGLIA";
-    char source_text[] = "OnceuponamidnightdrearywhileIponderedweakandwearyOvermanyaquaintandcuriousvolumeofforgottenloreWhileInoddednearlynappingsuddenlytherecameatappingAsofsomeonegentlyrappingrappingatmychamberdoorTissomevisitorImutteredtappingatmychamberdoorOnlythisandnothingmoreAhdistinctlyIrememberitwasinthebleakDecemberAndeachseparatedyingemberwroughtitsghostuponthefloorEagerlyIwishedthemorrowvainlyIhadsoughttoborrowFrommybookssurceaseofsorrowsorrowforthelostLenoreFortherareandradiantmaidenwhomtheangelsnameLenoreNamelesshereforevermoreAndthesilkensaduncertainrustlingofeachpurplecurtainThrilledmefilledmewithfantasticterrorsneverfeltbeforeSothatnowtostillthebeatingofmyheartIstoodrepeatingTissomevisitorentreatingentranceatmychamberdoorSomelatevisitorentreatingentranceatmychamberdoorThisitisandnothingmorePresentlymysoulgrewstrongerhesitatingthennolongerSirsaidIorMadamtrulyyourforgivenessIimploreButthefactisIwasnappingandsogentlyyoucamerappingAndsofaintlyyoucametappingtappingatmychamberdoorThatIscarcewassureIheardyouhereIopenedwidethedoorDarknessthereandnothingmoreDeepintothatdarknesspeeringlongIstoodtherewonderingfearingDoubtingdreamingdreamsnomortaleverdaredtodreambeforeButthesilencewasunbrokenandthestillnessgavenotokenAndtheonlywordtherespokenwasthewhisperedwordLenoreThisIwhisperedandanechomurmuredbackthewordLenoreMerelythisandnothingmoreBackintothechamberturningallmysoulwithinmeburningSoonagainIheardatappingsomewhatlouderthanbeforeSurelysaidIsurelythatissomethingatmywindowlatticeLetmeseethenwhatthereatisandthismysteryexploreLetmyheartbestillamomentandthismysteryexploreTisthewindandnothingmoreOpenhereIflungtheshutterwhenwithmanyaflirtandflutterIntheresteppedastatelyRavenofthesaintlydaysofyoreNottheleastobeisancemadehenotaminutestoppedorstayedheButwithmienoflordorladyperchedabovemychamberdoorPercheduponabustofPallasjustabovemychamberdoorPerchedandsatandnothingmoreThenthisebonybirdbeguilingmysadfancyintosmilingBythegraveandsterndecorumofthecountenanceitworeThoughthycrestbeshornandshaventhouIsaidartsurenocravenGhastlygrimandancientRavenwanderingfromtheNightlyshoreTellmewhatthylordlynameisontheNightsPlutonianshoreQuoththeRavenNevermoreMuchImarvelledthisungainlyfowltoheardiscoursesoplainlyThoughitsanswerlittlemeaninglittlerelevancyboreForwecannothelpagreeingthatnolivinghumanbeingEveryetwasblessedwithseeingbirdabovehischamberdoorBirdorbeastuponthesculpturedbustabovehischamberdoorWithsuchnameasNevermore";
+    // char source_text[999] = "CASA PAPEL HOTEL PASTEL";
+    // char source_text[] = "ONCEUPONAMIDNIGHTDREARYWHILEIPONDEREDWEAKANDWEARYOVERMANYAQUAINTANDCURIOUSVOLUMEOFFORGOTTENLOREWHILEINODDEDNEARLYNAPPINGSUDDENLYTHERECAMEATAPPINGASOFSOMEONEGENTLYRAPPINGRAPPINGATMYCHAMBERDOORTISSOMEVISITORIMUTTEREDTAPPINGATMYCHAMBERDOORONLYTHISANDNOTHINGMOREAHDISTINCTLYIREMEMBERITWASINTHEBLEAKDECEMBERANDEACHSEPARATEDYINGEMBERWROUGHTITSGHOSTUPONTHEFLOOREAGERLYIWISHEDTHEMORROWVAINLYIHADSOUGHTTOBORROWFROMMYBOOKSSURCEASEOFSORROWSORROWFORTHELOSTLENOREFORTHERAREANDRADIANTMAIDENWHOMTHEANGELSNAMELENORENAMELESSHEREFOREVERMOREANDTHESILKENSADUNCERTAINRUSTLINGOFEACHPURPLECURTAINTHRILLEDMEFILLEDMEWITHFANTASTICTERRORSNEVERFELTBEFORESOTHATNOWTOSTILLTHEBEATINGOFMYHEARTISTOODREPEATINGTISSOMEVISITORENTREATINGENTRANCEATMYCHAMBERDOORSOMELATEVISITORENTREATINGENTRANCEATMYCHAMBERDOORTHISITISANDNOTHINGMOREPRESENTLYMYSOULGREWSTRONGERHESITATINGTHENNOLONGERSIRSAIDIORMADAMTRULYYOURFORGIVENESSIIMPLOREBUTTHEFACTISIWASNAPPINGANDSOGENTLYYOUCAMERAPPINGANDSOFAINTLYYOUCAMETAPPINGTAPPINGATMYCHAMBERDOORTHATISCARCEWASSUREIHEARDYOUHEREIOPENEDWIDETHEDOORDARKNESSTHEREANDNOTHINGMOREDEEPINTOTHATDARKNESSPEERINGLONGISTOODTHEREWONDERINGFEARINGDOUBTINGDREAMINGDREAMSNOMORTALEVERDAREDTODREAMBEFOREBUTTHESILENCEWASUNBROKENANDTHESTILLNESSGAVENOTOKENANDTHEONLYWORDTHERESPOKENWASTHEWHISPEREDWORDLENORETHISIWHISPEREDANDANECHOMURMUREDBACKTHEWORDLENOREMERELYTHISANDNOTHINGMOREBACKINTOTHECHAMBERTURNINGALLMYSOULWITHINMEBURNINGSOONAGAINIHEARDATAPPINGSOMEWHATLOUDERTHANBEFORESURELYSAIDISURELYTHATISSOMETHINGATMYWINDOWLATTICELETMESEETHENWHATTHEREATISANDTHISMYSTERYEXPLORELETMYHEARTBESTILLAMOMENTANDTHISMYSTERYEXPLORETISTHEWINDANDNOTHINGMOREOPENHEREIFLUNGTHESHUTTERWHENWITHMANYAFLIRTANDFLUTTERINTHERESTEPPEDASTATELYRAVENOFTHESAINTLYDAYSOFYORENOTTHELEASTOBEISANCEMADEHENOTAMINUTESTOPPEDORSTAYEDHEBUTWITHMIENOFLORDORLADYPERCHEDABOVEMYCHAMBERDOORPERCHEDUPONABUSTOFPALLASJUSTABOVEMYCHAMBERDOORPERCHEDANDSATANDNOTHINGMORETHENTHISEBONYBIRDBEGUILINGMYSADFANCYINTOSMILINGBYTHEGRAVEANDSTERNDECORUMOFTHECOUNTENANCEITWORETHOUGHTHYCRESTBESHORNANDSHAVENTHOUISAIDARTSURENOCRAVENGHASTLYGRIMANDANCIENTRAVENWANDERINGFROMTHENIGHTLYSHORETELLMEWHATTHYLORDLYNAMEISONTHENIGHTSPLUTONIANSHOREQUOTHTHERAVENNEVERMOREMUCHIMARVELLEDTHISUNGAINLYFOWLTOHEARDISCOURSESOPLAINLYTHOUGHITSANSWERLITTLEMEANINGLITTLERELEVANCYBOREFORWECANNOTHELPAGREEINGTHATNOLIVINGHUMANBEINGEVERYETWASBLESSEDWITHSEEINGBIRDABOVEHISCHAMBERDOORBIRDORBEASTUPONTHESCULPTUREDBUSTABOVEHISCHAMBERDOORWITHSUCHNAMEASNEVERMOREBUTTHERAVENSITTINGLONELYONTHEPLACIDBUSTSPOKEONLYTHATONEWORDASIFHISSOULINTHATONEWORDHEDIDOUTPOURNOTHINGFARTHERTHENHEUTTEREDNOTAFEATHERTHENHEFLUTTEREDTILLISCARCELYMORETHANMUTTEREDOTHERFRIENDSHAVEFLOWNBEFOREONTHEMORROWHEWILLLEAVEMEASMYHOPESHAVEFLOWNBEFORETHENTHEBIRDSAIDNEVERMORESTARTLEDATTHESTILLNESSBROKENBYREPLYSOAPTLYSPOKENDOUBTLESSSAIDIWHATITUTTERSISITSONLYSTOCKANDSTORECAUGHTFROMSOMEUNHAPPYMASTERWHOMUNMERCIFULDISASTERFOLLOWEDFASTANDFOLLOWEDFASTERTILLHISSONGSONEBURDENBORETILLTHEDIRGESOFHISHOPETHATMELANCHOLYBURDENBOREOFNEVERNEVERMOREBUTTHERAVENSTILLBEGUILINGALLMYFANCYINTOSMILINGSTRAIGHTIWHEELEDACUSHIONEDSEATINFRONTOFBIRDANDBUSTANDDOORTHENUPONTHEVELVETSINKINGIBETOOKMYSELFTOLINKINGFANCYUNTOFANCYTHINKINGWHATTHISOMINOUSBIRDOFYOREWHATTHISGRIMUNGAINLYGHASTLYGAUNTANDOMINOUSBIRDOFYOREMEANTINCROAKINGNEVERMORETHISISATENGAGEDINGUESSINGBUTNOSYLLABLEEXPRESSINGTOTHEFOWLWHOSEFIERYEYESNOWBURNEDINTOMYBOSOMSCORETHISANDMOREISATDIVININGWITHMYHEADATEASERECLININGONTHECUSHIONSVELVETLININGTHATTHELAMPLIGHTGLOATEDOERBUTWHOSEVELVETVIOLETLININGWITHTHELAMPLIGHTGLOATINGOERSHESHALLPRESSAHNEVERMORETHENMETHOUGHTTHEAIRGREWDENSERPERFUMEDFROMANUNSEENCENSERSWUNGBYSERAPHIMWHOSEFOOTFALLSTINKLEDONTHETUFTEDFLOORWRETCHICRIEDTHYGODHATHLENTTHEEBYTHESEANGELSHEHATHSENTTHEERESPITERESPITEANDNEPENTHEFROMTHYMEMORIESOFLENOREQUAFFOHQUAFFTHISKINDNEPENTHEANDFORGETTHISLOSTLENOREQUOTHTHERAVENNEVERMOREPROPHETSAIDITHINGOFEVILPROPHETSTILLIFBIRDORDEVILWHETHERTEMPTERSENTORWHETHERTEMPESTTOSSEDTHEEHEREASHOREDESOLATEYETALLUNDAUNTEDONTHISDESERTLANDENCHANTEDONTHISHOMEBYHORRORHAUNTEDTELLMETRULYIIMPLOREISTHEREISTHEREBALMINGILEADTELLMETELLMEIIMPLOREQUOTHTHERAVENNEVERMOREPROPHETSAIDITHINGOFEVILPROPHETSTILLIFBIRDORDEVILBYTHATHEAVENTHATBENDSABOVEUSBYTHATGODWEBOTHADORETELLTHISSOULWITHSORROWLADENIFWITHINTHEDISTANTAIDENNITSHALLCLASPASAINTEDMAIDENWHOMTHEANGELSNAMELENORECLASPARAREANDRADIANTMAIDENWHOMTHEANGELSNAMELENOREQUOTHTHERAVENNEVERMOREBETHATWORDOURSIGNOFPARTINGBIRDORFIENDISHRIEKEDUPSTARTINGGETTHEEBACKINTOTHETEMPESTANDTHENIGHTSPLUTONIANSHORELEAVENOBLACKPLUMEASATOKENOFTHATLIETHYSOULHATHSPOKENLEAVEMYLONELINESSUNBROKENQUITTHEBUSTABOVEMYDOORTAKETHYBEAKFROMOUTMYHEARTANDTAKETHYFORMFROMOFFMYDOORQUOTHTHERAVENNEVERMOREANDTHERAVENNEVERFLITTINGSTILLISSITTINGSTILLISSITTINGONTHEPALLIDBUSTOFPALLASJUSTABOVEMYCHAMBERDOORANDHISEYESHAVEALLTHESEEMINGOFADEMONSTHATISDREAMINGANDTHELAMPLIGHTOERHIMSTREAMINGTHROWSHISSHADOWONTHEFLOORANDMYSOULFROMOUTTHATSHADOWTHATLIESFLOATINGONTHEFLOORSHALLBELIFTEDNEVERMORE";
+    char source_text[999];
+    printf("Digite o texto para compactar. Por favor, sem acentos! ");
+    fgets(source_text, 999, stdin);
+    int last_char = strlen(source_text) - 1;
+    if (*(source_text + last_char) == '\n') {
+        *(source_text + last_char) = '\0';
+    }
+
     // char source_text[100] = "AAAAAABBBBBCCCCDDDEEEEEEEEEF";
     //  Vetor para contagem de caracteres
     //  TODO: incluir caracteres especiais, acentos, espaços e etc
@@ -221,13 +232,13 @@ int main() {
     root = huffman_tree(&first_leaf, total - 1);
 
     if (DEBUG) explain(root);
-    char r[999]; for (int i = 0; i < 999; i++) r[i] = '\0';
+    char r[999999]; for (int i = 0; i < 999999; i++) r[i] = '\0';
     char* code;
     for (int i = 0; i < LIMIT; i++) {
         if (char_count[i] == 0) continue;
-        code = bin_from_tree(root, i + 'A');
-        printf("WARD for %c\n", i + 'A');
-        printf("Binary code for %c is %s\n", i + 'A', code);
+        code = bin_from_tree(root, i);
+        // printf("WARD for %c\n", i);
+        printf("Binary code for %c is %s\n", i, code);
     }
     char current_char;
     current_char = source_text[0];
@@ -235,13 +246,14 @@ int main() {
     printf("============================\n");
     //  Traduz a string original usando os códigos da árvore de Huffman.
     while (current_char != '\0') {
-        // printf("WARD? %c\n", toupper(current_char));
-        code = bin_from_tree(root, toupper(current_char));
-        // strcat(r, code);
+        code = bin_from_tree(root, current_char);
+        strcat(r, code);
         printf("%s", code);
         i++;
         current_char = source_text[i];
     }
+    printf("\n\nTamanho original: %ld bits\n", strlen(source_text) * 4);
+    printf("Tamanho compactado: %ld bits\n", strlen(r));
     printf("\n\n");
     // printf("Resultado: %s\n", r);
 
