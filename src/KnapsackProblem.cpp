@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int tabela[100][100];
+int tabela_0_1[100][100];
+
 void knapsack(int capacidade, int peso[], int valor[], int n){
-    int tabela[n+1][capacidade+1];
-    int tabela_0_1[n+1][capacidade+1];
 
 // Inicialização da tabela
 // ----------------------------------------------------------------------------
@@ -30,65 +31,107 @@ void knapsack(int capacidade, int peso[], int valor[], int n){
         }
     }
 
+}
 
-// Print Tabela
+void menu(){
+    system("@cls || clear");
+    printf("1 - Inserir dados;");
+    printf("\n2 - Resolver o Knapsack Problem;");
+    printf("\n3 - Resultado;");
+    printf("\n0 - Sair;");
+    printf("\n\nEscolha a opcao desejada: ");
+}
+
+void pausa(){ //Pause
+    printf("\n\nPressione qualquer tecla para continuar...");
+    getchar();
+    getchar();
+}
+
+void resultado(int n, int capacidade, int peso[], int valor[]){
+    // Tabela com valores
+    system("@cls || clear");
+    printf("Tabela com valores:\n\n");
     for(int i = 0; i <= n; i++){
         for(int j = 0; j <= capacidade; j++){
-            printf(" %2d ", tabela[i][j]);
+            printf(" %3d ", tabela[i][j]);
         }
         printf("\n");
     }
 
-printf("\n\n");
-// Print Tabela_0_1
+    printf("\n\n\nTabela de 0s e 1s:\n\n");
     for(int i = 0; i <= n; i++){
         for(int j = 0; j <= capacidade; j++){
-            printf(" %2d ", tabela_0_1[i][j]);
+            printf(" %3d ", tabela_0_1[i][j]);
         }
         printf("\n");
     }
 
-// Print Do resultado
-printf("\nO Valor Maximo e: %d\n\n", tabela[n][capacidade]);
-printf("Com os seguintes itens: | Valor | Peso |\n");
-int coluna_atual = capacidade;
-for(int i = n + 1; i >= 1; i--){
-    if(tabela_0_1[i][coluna_atual] == 1){
-        printf("                        | %5d | %4d |\n", valor[i-1], peso[i-1]);
-        coluna_atual = coluna_atual - peso[i-1];
+    printf("\n\n\nO Valor Maximo e: %d\n\n", tabela[n][capacidade]);
+    printf("Com os seguintes itens: | Peso | Valor |\n");
+    int coluna_atual = capacidade;
+    for(int i = n + 1; i >= 1; i--){
+        if(tabela_0_1[i][coluna_atual] == 1){
+            printf("                        | %4d | %5d |\n", peso[i-1], valor[i-1]);
+            coluna_atual = coluna_atual - peso[i-1];
+        }
     }
-}
-printf("\nOcupando um total de %d da capacidade da mochila(%d)", capacidade - coluna_atual, capacidade);
-if(coluna_atual > 0){
-    printf("\nSobrando %d de capacidade", coluna_atual);
-}
-printf("\n\n");
-// ----------------------------------------------------------------------------
-
-
-// ----------------------------------------------------------------------------
+    printf("\nOcupando um total de %d da capacidade da mochila(%d)", capacidade - coluna_atual, capacidade);
+    if(coluna_atual > 0){
+        printf("\nSobrando %d de capacidade", coluna_atual);
+    }
 }
 
 int main(){
-    // 1)
-        // int n = 4;
-        // int peso[] = {4, 2, 1, 3};
-        // int valor[]= {50, 40, 30, 45};
-        // int capacidade = 5;
-    // ----------------------------------------------------------------------------
-    //
-    // 2)
-        // int n = 7;
-        // int peso[]= {4, 6, 5, 7, 3, 1, 6};
-        // int valor[] = {12, 10, 8, 11, 14, 7, 9};
-        // int capacidade = 18;
-    // // ----------------------------------------------------------------------------
+    int escolha = -1;
+    int n, capacidade;
+    int peso[100], valor[100];
+    n = capacidade = 0;
+    //Dados
+    while(escolha) {
+        menu();
+        scanf("%d", &escolha);
+        switch (escolha) {
 
-    // 3)
-        int n = 6;
-        int peso[]= {1, 2, 3, 5, 6, 8};
-        int valor[] = {3, 6, 7, 9, 11, 18};
-        int capacidade = 15;
-    // ----------------------------------------------------------------------------
-    knapsack(capacidade, peso, valor, n);
+            case 1:
+                system("@cls || clear");
+                printf("Escolha do numero de elementos (n): ");
+                scanf("%d", &n);
+                for(int i = 0; i < n; i++){
+                    system("@cls || clear");
+                    printf("Digite o Peso e o Valor respectivamente (Peso Valor): ");
+                    scanf("%d %d", &peso[i], &valor[i]);
+                }
+                system("@cls || clear");
+                printf("Qual a capacidade da mochila? (Capacidade): ");
+                scanf("%d", &capacidade);
+
+                //Dados
+                system("@cls || clear");
+                printf("Numero de elementos: %d", n);
+                printf("\n\n| Peso | Valor |\n");
+                for(int i = 0; i < n; i++){
+                    printf("| %4d | %5d |\n", peso[i], valor[i]);
+                }
+                printf("\n\nCapacidade da mochila: %d", capacidade);
+                pausa();
+            break;
+
+            case 2:
+                system("@cls || clear");
+                printf("Resolvendo o problema da mochila...");
+                knapsack(capacidade, peso, valor, n);
+                printf("\n\nProblema resolvido :)");
+                pausa();
+            break;
+
+            case 3:
+                resultado(n, capacidade, peso, valor);
+                pausa();
+            break;
+        }
+    }
+    system("@cls || clear");
+    printf("BYE BYE :)\n\n");
+
 }
